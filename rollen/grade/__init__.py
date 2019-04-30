@@ -1,0 +1,1 @@
+from .catego import Catego
