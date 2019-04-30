@@ -22,7 +22,3 @@ def test_remove_all_duplicates():
     line_list = [1580]
     table_name_list = ["cid"]
     remove_all_dupilicates(line_list, table_name_list)
-
-
-if __name__ == '__main__':
-    main()
