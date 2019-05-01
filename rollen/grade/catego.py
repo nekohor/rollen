@@ -45,6 +45,11 @@ class Catego():
                 raise Exception("unknown grade tag")
         return categos
 
+    def get_custom_grades(self, specific_grades):
+        return self.catego_df[
+            self.get_custom_categos(specific_grades)
+        ].values.reshape(-1)
+
     def cut(self, grade_series):
         # 修正grade series的index
         max_num = grade_series.shape[0]
@@ -64,9 +69,7 @@ class Catego():
             if specific_grades == "全钢种":
                 return df
             else:
-                grade_list = self.catego_df[
-                    self.get_custom_categos(specific_grades)
-                ].values.reshape(-1)
+                grade_list = self.get_custom_grades(specific_grades)
         else:
             raise Exception("specific_grades type unknown")
         return df.loc[df[grade_col].isin(grade_list)]

@@ -9,4 +9,16 @@ class DataFrameQueryBuilder():
         self.df = df
         return self
 
-    def where(self, col_name, operator, value):
+    def select(self, cols):
+        if isinstance(cols, list):
+
+        self.select_cols =
+
+        return self
+
+    def where(self, key, operator, value):
+
+        return self
+
+    def get(self):
+        return self.df
