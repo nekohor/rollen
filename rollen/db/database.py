@@ -1,6 +1,7 @@
 from sqlalchemy import create_engine
 import pymysql
 import pandas as pd
+import logging
 from .creator import Creator
 
 
@@ -45,39 +46,120 @@ class DataBase():
     def select(self, fields):
         if isinstance(fields, list):
             self.fields = ",".join([str(x) for x in fields])
+        elif isinstance(fields, str):
+            self.fields = fields
         elif fields == "*":
             self.fields = "*"
         else:
             raise Exception("unknown fields in DataBase#select()")
         return self
 
-    def where(self, col_name):
-        self.col_name = col_name
+    def where(self, key, operator=None, value=None):
+
+        if isinstance(key, str):
+            self.key = key
+        else:
+            raise Exception("key in where() is not str")
+
+        self.operator, self.value = self.get_oper_val(operator, value)
         return self
 
-    def isin(self, elem_list):
-        self.elems = ",".join([str(e) for e in elem_list])
-        self.query = (
-            " SELECT {} FROM `{}` WHERE `{}` IN({})").format(
-            self.fields,
-            self.table_name,
-            self.col_name,
-            self.elems
-        )
-        return self
+    def get_oper_val(self, operator, value):
+
+        if not operator and not value:
+            return None, None
+        elif operator and not value:
+            oper, val = self.isequal(operator)
+        elif not operator and value:
+            oper, val = self.isequal(value)
+        elif operator and value:
+            oper, val = self.compare(operator, value)
+        else:
+            raise Exception("other circums in operator_for_where()")
+
+        return oper, val
+
+    def compare(self, operator, value):
+
+        if operator == "=" or operator == "==":
+            oper, val = self.isequal(value)
+        elif operator == "!=" or operator == "<>":
+            oper, val = self.notequal(value)
+        elif operator == ">" or operator == "<":
+            oper, val = operator, value
+        elif operator == ">=" or operator == "<=":
+            oper, val = operator, value
+        elif operator == "in":
+            oper, val = self.isin(value)
+        elif operator == "regexp":
+            oper, val = self.regexp(value)
+        return oper, val
+
+    def isequal(self, value):
+        if isinstance(value, list):
+            return self.isin()
+        else:
+            return "=", value
+
+    def notequal(self, value):
+        if isinstance(value, list):
+            return self.notin()
+        else:
+            return "<>", value
+
+    def isin(self, elems):
+        oper = "IN"
+
+        if isinstance(elems, list):
+            pass
+        else:
+            raise Exception("wrong type of elems in isin()")
+
+        val = "(" + ",".join([str(e) for e in elems]) + ")"
+
+        return oper, val
+
+    def notin(self, elems):
+        oper = "NOT IN"
+
+        if isinstance(elems, list):
+            pass
+        else:
+            raise Exception("wrong type of elems in notin()")
+
+        val = "(" + ",".join([str(e) for e in elems]) + ")"
+
+        return oper, val
 
     def regexp(self, pattern):
-        self.pattern = pattern
-        self.query = (
-            " SELECT {} FROM `{}` WHERE (`{}` REGEXP '{}')").format(
-            self.fields,
-            self.table_name,
-            self.col_name,
-            self.pattern
-        )
-        return self
+        oper = "REGEXP"
+
+        if isinstance(pattern, str):
+            pass
+        else:
+            raise Exception("wrong type of pattern in regexp()")
+
+        val = pattern
+
+        return oper, val
 
     def get(self):
+
+        if self.fields:
+            pass
+        else:
+            self.fields = "*"
+
+        self.query = (
+            "SELECT {} FROM `{}` WHERE `{}` {} {}").format(
+            self.fields,
+            self.table_name,
+            self.key,
+            self.operator,
+            self.value
+        )
+        logging.info(self.query)
+
         df = pd.read_sql(self.query, self.engine)
         if df.shape[0] == 0:
             raise Exception("the data cannot find in datebase")
@@ -103,21 +185,3 @@ class DataBase():
     def rebuild(self, table_name):
         self.drop(table_name)
         self.create(table_name)
-
-    # def read_by_elems(self, table_name, col_name, elem_list):
-    #     query = (
-    #         " SELECT * FROM `{}` WHERE `{}` IN({})").format(
-    #         table_name,
-    #         col_name,
-    #         ",".join([str(e) for e in elem_list])
-    #     )
-    #     return self.read_by_sql(query)
-
-    # def read_by_regexp(self, table_name, col_name, regexp):
-    #     query = (
-    #         " SELECT * FROM `{}` WHERE (`{}` REGEXP '{}')").format(
-    #         table_name,
-    #         col_name,
-    #         regexp
-    #     )
-    #     return self.read_by_sql(query)
