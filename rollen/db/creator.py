@@ -1,12 +1,11 @@
-import rollen
+from rollen import config
 import os
 
 
 class Creator():
 
     def __init__(self):
-        self.tools = rollen.roll()
-        self.sqls_dir = self.tools.get_module_dir("db") + "/sqls"
+        self.sqls_dir = config.get_module_dir("db") + "/sqls"
         # self.table_names = ["excel", "temp", "cid", "nonC41", "evaluate"]
 
     def create(self, conn, table_name):

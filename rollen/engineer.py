@@ -1,13 +1,15 @@
 from .time import TimeUtils
 from .db import DataBase
 from .grade import Catego
+from .query import DataFrameQueryBuilder
 
 
 class Rollen():
 
     def __init__(self):
         self.time = TimeUtils()
-        self.grade = Catego(self)
+        self.grade = Catego()
+        self.query = DataFrameQueryBuilder()
 
     def set_line(self, line):
         if isinstance(line, int):
@@ -23,10 +25,3 @@ class Rollen():
             return self.line
         else:
             raise Exception("rollen object doesn't have line attr")
-
-    def get_data_collection_dir(self, tag):
-        return "d:/data_collection_{}".format(tag)
-
-    def get_module_dir(self, sub_module):
-        module_dir = "C:/NutCloudSync/code/rollen/rollen"
-        return module_dir + "/" + sub_module

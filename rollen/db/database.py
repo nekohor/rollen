@@ -75,7 +75,7 @@ class DataBase():
         elif operator and value:
             oper, val = self.compare(operator, value)
         else:
-            raise Exception("other circums in operator_for_where()")
+            raise Exception("other circums in get_oper_val()")
 
         return oper, val
 

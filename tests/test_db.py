@@ -18,7 +18,7 @@ def test_check_files_exist():
     check_files_exist(line_list, month_date_list, table_name_list)
 
 
-def test_remove_all_duplicates():
-    line_list = [1580]
-    table_name_list = ["cid"]
-    remove_all_dupilicates(line_list, table_name_list)
+# def test_remove_all_duplicates():
+#     line_list = [1580]
+#     table_name_list = ["cid"]
+#     remove_all_dupilicates(line_list, table_name_list)

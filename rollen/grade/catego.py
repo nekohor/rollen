@@ -1,12 +1,12 @@
 import pandas as pd
+from rollen import config
 
 
 class Catego():
 
-    def __init__(self, rollen):
-        self.rollen = rollen
+    def __init__(self):
         self.catego_df = pd.read_excel(
-            self.rollen.get_module_dir("grade") +
+            config.get_module_dir("grade") +
             "/grade_categorization.xlsx")
         self.hash_df = self.get_hash_df()
 

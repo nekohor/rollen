@@ -3,6 +3,7 @@ import pandas as pd
 import logging
 from .database import DataBase
 from .dustman import DustMan
+from rollen import config
 
 
 class Insertion():
@@ -17,7 +18,7 @@ class Insertion():
         self.dustman = DustMan(self.line)
 
         self.df_cols_path = (
-            self.rollen.get_module_dir("db") + "/cols.xlsx"
+            config.get_module_dir("db") + "/cols.xlsx"
         )
         self.df_cols = pd.read_excel(self.df_cols_path)
 
@@ -43,7 +44,7 @@ class Insertion():
     def get_file_name(self, month_date):
         self.mdate = month_date
         return os.path.join(
-            self.rollen.get_data_collection_dir(self.tag),
+            config.get_data_collection_dir(self.tag),
             getattr(self, "get_{}_file_name".format(self.tag))()
         )
 
