@@ -41,6 +41,7 @@ class DataBase():
 
     def table(self, table_name):
         self.table_name = table_name
+        self.wheres = []
         return self
 
     def select(self, fields):
@@ -56,92 +57,78 @@ class DataBase():
 
     def where(self, key, operator=None, value=None):
 
-        if isinstance(key, str):
-            self.key = key
+        if not operator and not value:
+            self.onlykey(key)
+        elif operator and not value:
+            self.isequal(key, operator)
+        elif not operator and value:
+            self.isequal(key, value)
+        elif operator and value:
+            self.wheres.append([key, operator, value])
         else:
-            raise Exception("key in where() is not str")
+            raise Exception("other circums in where()")
 
-        self.operator, self.value = self.get_oper_val(operator, value)
         return self
 
-    def get_oper_val(self, operator, value):
+    def onlykey(self, key):
+        """ no return """
 
-        if not operator and not value:
-            return None, None
-        elif operator and not value:
-            oper, val = self.isequal(operator)
-        elif not operator and value:
-            oper, val = self.isequal(value)
-        elif operator and value:
-            oper, val = self.compare(operator, value)
+        if isinstance(key, list):
+            self.add_conditions_to_wheres(key)
         else:
-            raise Exception("other circums in get_oper_val()")
+            raise Exception("wrong type of one param key")
 
-        return oper, val
+    def add_conditions_to_wheres(self, conditions):
+        """ no return """
 
-    def compare(self, operator, value):
+        for elems in conditions:
+            if isinstance(elems, list):
+                raise Exception("type of condition not list")
 
-        if operator == "=" or operator == "==":
-            oper, val = self.isequal(value)
-        elif operator == "!=" or operator == "<>":
-            oper, val = self.notequal(value)
-        elif operator == ">" or operator == "<":
-            oper, val = operator, value
-        elif operator == ">=" or operator == "<=":
-            oper, val = operator, value
-        elif operator == "in":
-            oper, val = self.isin(value)
-        elif operator == "regexp":
-            oper, val = self.regexp(value)
-        return oper, val
+            if len(elems) != 3:
+                raise Exception("count of condition list not equal to 3")
 
-    def isequal(self, value):
+            for elem in elems:
+                if isinstance(elem, str):
+                    pass
+                else:
+                    raise Exception("type of elem in condition not str")
+
+        for key, oper, val in conditions:
+            self.wheres.append([key, oper, val])
+
+    def isequal(self, key, value):
+        """ no return """
+
+        if isinstance(key, str):
+            pass
+        else:
+            raise Exception("wrong type of key, str needed")
+
         if isinstance(value, list):
-            return self.isin()
+            self.wheres.append([key, "in", value])
         else:
-            return "=", value
+            self.wheres.append([key, "=", value])
 
-    def notequal(self, value):
-        if isinstance(value, list):
-            return self.notin()
+    def operator_strategy(self, key, oper, val):
+        if oper == "=" or oper == "==":
+            return "{} = {}".format(key, val)
+        elif oper == "in" or oper == "isin":
+            return "{} IN ({})".format(key, ",".join(val))
+        elif oper == "!=" or oper == "<>":
+            return "{} <> {}".format(key, val)
+        elif oper == ">":
+            return "{} > {}".format(key, val)
+        elif oper == "<":
+            return "{} < {}".format(key, val)
+        elif oper == ">=":
+            return "{} >= {}".format(key, val)
+        elif oper == "<=":
+            return "{} <= {}".format(key, val)
+        elif oper == "regexp" or oper == "re":
+            return "{} REGEXP ({})".format(key, ",".join(val))
         else:
-            return "<>", value
-
-    def isin(self, elems):
-        oper = "IN"
-
-        if isinstance(elems, list):
-            pass
-        else:
-            raise Exception("wrong type of elems in isin()")
-
-        val = "(" + ",".join([str(e) for e in elems]) + ")"
-
-        return oper, val
-
-    def notin(self, elems):
-        oper = "NOT IN"
-
-        if isinstance(elems, list):
-            pass
-        else:
-            raise Exception("wrong type of elems in notin()")
-
-        val = "(" + ",".join([str(e) for e in elems]) + ")"
-
-        return oper, val
-
-    def regexp(self, pattern):
-        oper = "REGEXP"
-
-        if isinstance(pattern, str):
-            pass
-        else:
-            raise Exception("wrong type of pattern in regexp()")
-
-        val = pattern
-
-        return oper, val
+            raise Exception("unknown operator")
 
     def get(self):
 
@@ -150,13 +137,15 @@ class DataBase():
         else:
             self.fields = "*"
 
+        conditions = []
+        for key, oper, val in self.wheres:
+            conditions.append(self.operator_strategy(key, oper, val))
+
         self.query = (
             "SELECT {} FROM `{}` WHERE `{}` {} {}").format(
             self.fields,
             self.table_name,
-            self.key,
-            self.operator,
-            self.value
+            "AND".join(conditions)
         )
         logging.info(self.query)
 

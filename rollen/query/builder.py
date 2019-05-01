@@ -12,6 +12,7 @@ class DataFrameQueryBuilder():
         return self
 
     def select(self, cols):
+
         if isinstance(cols, list) or isinstance(cols, pd.Series):
             self.df = self.df[cols]
         elif isinstance(cols, str):
@@ -22,59 +23,79 @@ class DataFrameQueryBuilder():
         return self
 
     def where(self, key, operator=None, value=None):
+
         if not operator and not value:
-            return None, None
+            self.onlykey(key)
         elif operator and not value:
-            oper, val = self.isequal(operator)
+            self.isequal(key, operator)
         elif not operator and value:
-            oper, val = self.isequal(value)
+            self.isequal(key, value)
         elif operator and value:
-            oper, val = operator, value
+            self.wheres.append([key, operator, value])
         else:
-            raise Exception("other circums in builder where()")
-        self.wheres.append([key, oper, val])
+            raise Exception("other circums in where()")
+
         return self
 
-    def isequal(self, value):
-        if isinstance(value, list):
-            return self.isin()
+    def onlykey(self, key):
+        """ no return """
+
+        if isinstance(key, list):
+            self.add_conditions_to_wheres(key)
         else:
-            return "=", value
+            raise Exception("wrong type of one param key")
 
-    def notequal(self, value):
-        if isinstance(value, list):
-            return self.notin()
-        else:
-            return "<>", value
+    def add_conditions_to_wheres(self, conditions):
+        """ no return """
 
-    def isin(self, elems):
-        oper = "IN"
+        for elems in conditions:
+            if isinstance(elems, list):
+                raise Exception("type of condition not list")
 
-        if isinstance(elems, list):
+            if len(elems) != 3:
+                raise Exception("count of condition list not equal to 3")
+
+            for elem in elems:
+                if isinstance(elem, str):
+                    pass
+                else:
+                    raise Exception("type of elem in condition not str")
+
+        for key, oper, val in conditions:
+            self.wheres.append([key, oper, val])
+
+    def isequal(self, key, value):
+        """ no return """
+
+        if isinstance(key, str):
             pass
         else:
-            raise Exception("wrong type of elems in isin()")
+            raise Exception("wrong type of key, str needed")
 
-        val = "(" + ",".join([str(e) for e in elems]) + ")"
-
-        return oper, val
-
-    def notin(self, elems):
-        oper = "NOT IN"
-
-        if isinstance(elems, list):
-            pass
+        if isinstance(value, list):
+            self.wheres.append([key, "in", value])
         else:
-            raise Exception("wrong type of elems in notin()")
+            self.wheres.append([key, "=", value])
 
-        val = "(" + ",".join([str(e) for e in elems]) + ")"
-
-        return oper, val
-
-    def operator_func(self):
-
-    def locate(self):
-        for where in wheres:
+    def operator_strategy(self, df, key, oper, val):
+        if oper == "=" or oper == "==":
+            return df.loc[df[key] == val]
+        elif oper == "in" or oper == "isin":
+            return df.loc[df[key].isin(val)]
+        elif oper == "!=" or oper == "<>":
+            return df.loc[df[key] != val]
+        elif oper == ">":
+            return df.loc[df[key] > val]
+        elif oper == "<":
+            return df.loc[df[key] < val]
+        elif oper == ">=":
+            return df.loc[df[key] >= val]
+        elif oper == "<=":
+            return df.loc[df[key] <= val]
+        else:
+            raise Exception("unknown operator")
 
     def get(self):
+        for key, oper, val in self.wheres:
+            self.df = self.operator_strategy(self.df, key, oper, val)
         return self.df
