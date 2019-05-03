@@ -1,3 +1,4 @@
 {
+  "tests/test_db.py::test_check_files_exist": true,
   "tests/test_db.py::test_remove_all_duplicates": true
 }

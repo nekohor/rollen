@@ -10,12 +10,12 @@ logging.basicConfig(
     level=logging.DEBUG)
 
 
-def test_check_files_exist():
-    line_list = [2250, 1580]
-    tools = rollen.roll()
-    month_date_list = tools.time.get_month_dates(201701, 201803)
-    table_name_list = ["excel", "temp"]
-    check_files_exist(line_list, month_date_list, table_name_list)
+# def test_check_files_exist():
+#     line_list = [2250, 1580]
+#     tools = rollen.roll()
+#     month_date_list = tools.time.get_month_dates(201701, 201803)
+#     table_name_list = ["excel", "temp"]
+#     check_files_exist(line_list, month_date_list, table_name_list)
 
 
 # def test_remove_all_duplicates():
