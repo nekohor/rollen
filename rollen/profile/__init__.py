@@ -1,2 +1,3 @@
 from .cvc import ContinuouslyVariableCrown
-from .cvc import plot_shfts_crns
+
+from .plots import plot_shfts_crns

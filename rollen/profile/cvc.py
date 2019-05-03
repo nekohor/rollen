@@ -165,24 +165,7 @@ class ContinuouslyVariableCrown():
     def plot_shft_crn(self):
         plt.plot(self.get_shft_array(),
                  self.calc_crns(self.get_shft_array()),
-                 label=self.wid)
+                 label="{}$mm$".format(self.wid))
 
     def plot_prof(self):
         pass
-
-
-def plot_shfts_crns(line, std, wids, shfts):
-    plt.figure()
-    for wid in wids:
-        cvc = ContinuouslyVariableCrown(line, std, wid)
-        cvc.plot_shft_crn()
-
-    cvc = ContinuouslyVariableCrown(line, std, wids[1])
-    plt.plot(
-        shfts,
-        cvc.calc_crns(shfts),
-        'r+',
-        label="特定窜辊位置"
-    )
-    plt.savefig("plot_shft_crn.png")
-    plt.close("all")
