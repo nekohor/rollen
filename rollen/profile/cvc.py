@@ -118,6 +118,9 @@ class ContinuouslyVariableCrown():
 
         return [0, a1, a2, a3]
 
+    def get_prof_fit(self):
+        return np.poly1d(self.get_prof_coefs()[::-1])
+
     def get_crn(self, pos_shft):
 
         Lwr = self.roll.get_len()
@@ -127,7 +130,7 @@ class ContinuouslyVariableCrown():
         Ps = L - pos_shft
         Psb = L + pos_shft
 
-        p = np.poly1d(self.get_prof_coefs()[::-1])
+        p = self.get_prof_fit()
         D = p(Lwr)
 
         Hc = D - p(Lwr - Psb) - p(Ps)
@@ -162,10 +165,20 @@ class ContinuouslyVariableCrown():
     def calc_crns(self, shfts):
         return np.polyval(self.get_curve_shft_crn(), shfts)
 
-    def plot_shft_crn(self):
+    def plot_shft_crn(self, label):
         plt.plot(self.get_shft_array(),
                  self.calc_crns(self.get_shft_array()),
-                 label="{}$mm$".format(self.wid))
+                 label=label)
 
-    def plot_prof(self):
-        pass
+    def plot_profs(self, shfts, linestyles):
+        roll_len_array = np.arange(self.roll.get_len())
+
+        p = self.get_prof_fit()
+
+        i = 0
+        for shft in shfts:
+            plt.plot(roll_len_array, p(roll_len_array + shft) + 0.2,
+                     linestyles[i], label="窜辊位置{}$mm$".format(shft))
+            plt.plot(roll_len_array, p(roll_len_array - shft) - 0.2,
+                     linestyles[i], label=None)
+            i = i + 1

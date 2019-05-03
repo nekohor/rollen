@@ -1,6 +1,6 @@
-import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
+import logging
 
 from .cvc import ContinuouslyVariableCrown
 sns.set(color_codes=True)
@@ -15,7 +15,7 @@ def plot_shfts_crns(line, std, wids, shfts, max_crn=None, min_crn=None):
 
     for wid in wids:
         cvc = ContinuouslyVariableCrown(line, std, wid, max_crn, min_crn)
-        cvc.plot_shft_crn()
+        cvc.plot_shft_crn("{}$mm$".format(wid))
 
     cvc = ContinuouslyVariableCrown(line, std, wids[1], max_crn, min_crn)
 
@@ -30,13 +30,62 @@ def plot_shfts_crns(line, std, wids, shfts, max_crn=None, min_crn=None):
 
     # text
     for shft in shfts:
-        plt.text(shft, cvc.calc_crns(shft), "{}mm".format(shft))
+        plt.text(shft + 10, cvc.calc_crns(shft), "{}mm".format(shft))
+
     plt.legend()
 
-    plt.title("{}产线 F{}机架 $Cmax={}mm$ $Cmin={}mm$".format(
+    plt.title("{}产线 F{}机架 $Cmax$={}$mm$ $Cmin$={}$mm$".format(
         line, std, cvc.max_crn, cvc.min_crn))
     plt.xlabel("窜辊位置($mm$)")
     plt.ylabel("辊缝凸度( $\mu m$)")
 
-    plt.savefig("plot_shft_crn.png")
+    plt.savefig("plot_shfts_crns.png")
+    plt.close("all")
+
+
+def plot_shft_crn_optimized(line, std, wid, max_crn, min_crn):
+    plt.figure()
+
+    old_cvc = ContinuouslyVariableCrown(line, std, wid)
+    new_cvc = ContinuouslyVariableCrown(line, std, wid, max_crn, min_crn)
+
+    old_cvc.plot_shft_crn(label="改进前窜辊-凸度对应关系")
+    new_cvc.plot_shft_crn(label="改进后窜辊-凸度对应关系")
+    logging.info(new_cvc.max_crn)
+    logging.info(new_cvc.min_crn)
+
+    coefs = [round(x, 16) for x in new_cvc.get_prof_coefs()]
+
+    plt.text(50, -200,
+             "新a1={}\n新a2={}\n新a3={}\n".format(coefs[1], coefs[2], coefs[3]))
+
+    plt.legend()
+
+    plt.title("{}产线 F{}机架 宽度{}$mm$ 新$Cmax$={}$mm$ 新$Cmin$={}$mm$".format(
+        line, std, wid, max_crn, min_crn))
+
+    plt.xlabel("窜辊位置($mm$)")
+    plt.ylabel("辊缝凸度( $\mu m$)")
+    plt.savefig("plot_shft_crn_optimized.png")
+    plt.close("all")
+
+
+def plot_cvc_profs(line, std, wid,
+                   shfts, linestyles,
+                   max_crn=None, min_crn=None):
+    plt.figure()
+
+    cvc = ContinuouslyVariableCrown(line, std, wid, max_crn, min_crn)
+
+    cvc.plot_profs(shfts, linestyles)
+
+    plt.legend()
+
+    plt.title("{}产线 F{}机架 宽度{}$mm$ $Cmax$={}$mm$ $Cmin$={}$mm$".format(
+        line, std, wid, cvc.max_crn, cvc.min_crn))
+
+    plt.xlabel("辊身长度($mm$)")
+    plt.ylabel("CVC辊缝形状相对位置($mm$)")
+
+    plt.savefig("plot_cvc_profs.png")
     plt.close("all")
