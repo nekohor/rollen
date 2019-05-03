@@ -1,7 +1,7 @@
-Class Roll():
+class Roll():
 
     def __init__(self, line):
-        self.line =
+        self.line = line
 
     def get_len(self):
         return self.line + 300
