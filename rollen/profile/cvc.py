@@ -1,6 +1,17 @@
 import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+
 from .std import Stand
 from .roll import Roll
+
+
+sns.set(color_codes=True)
+sns.set(rc={'font.family': [u'Microsoft YaHei']})
+sns.set(rc={'font.sans-serif': [u'Microsoft YaHei', u'Arial',
+                                u'Liberation Sans', u'Bitstream Vera Sans',
+                                u'sans-serif']})
+# mpl.style.use('ggplot')
 
 
 class ContinuouslyVariableCrown():
@@ -117,6 +128,41 @@ class ContinuouslyVariableCrown():
     def get_crn_array(self, wid, coefs):
         crn_array = np.array([])
         for shft in self.get_shft_array():
-            crn_array = np.append(crn_array, self.get_crn(shft, wid, coefs))
+            crn_array = np.append(crn_array, self.get_crn(wid, shft, coefs))
+        return crn_array
 
-    def get_curve(self, wid, max_crn=None, min_crn=None):
+    def get_curve_shft_crn(self, wid, max_crn=None, min_crn=None):
+        coefs = self.get_prof_coefs(max_crn, min_crn)
+        p = np.polyfit(self.get_shft_array(),
+                       self.get_crn_array(wid, coefs), 1)
+        return p
+
+    def get_curve_crn_shft(self, wid, max_crn=None, min_crn=None):
+        coefs = self.get_prof_coefs(max_crn, min_crn)
+        p = np.polyfit(self.get_crn_array(wid, coefs),
+                       self.get_shft_array(), 1)
+        return p
+
+    def calc_shft(self, wid, crn, max_crn=None, min_crn=None):
+        return np.polyval(self.get_curve_crn_shft(wid, max_crn, min_crn), crn)
+
+    def calc_crn(self, wid, shft, max_crn=None, min_crn=None):
+        return np.polyval(self.get_curve_shft_crn(wid, max_crn, min_crn), shft)
+
+    def plot_shft_crn(self, wids, pos_shfts):
+        plt.figure()
+        for wid in wids:
+            plt.plot(
+                self.get_shft_array(),
+                self.calc_crn(wid, self.get_shft_array()),
+                label=wid
+            )
+        plt.plot(
+            pos_shfts,
+            self.calc_crn(wid, pos_shfts),
+            label=wid
+        )
+        plt.savefig("plot_shft_crn.png")
+        plt.close("all")
+
+    def plot_prof(self):
