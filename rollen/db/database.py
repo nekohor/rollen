@@ -112,9 +112,15 @@ class DataBase():
 
     def operator_strategy(self, key, oper, val):
         if oper == "=" or oper == "==":
-            return "{} = {}".format(key, val)
+            if isinstance(val, str):
+                return "{} = '{}'".format(key, val)
+            else:
+                return "{} = {}".format(key, val)
         elif oper == "in" or oper == "isin":
-            return "{} IN ({})".format(key, ",".join(val))
+            v = " , ".join([str(x) for x in val])
+            return "{} IN({})".format(key, v)
+            # s = " OR ".join(["{} = {}".format(key, str(v)) for v in val])
+            # return s ; or use FIND_IN_SET()
         elif oper == "!=" or oper == "<>":
             return "{} <> {}".format(key, val)
         elif oper == ">":
@@ -132,17 +138,18 @@ class DataBase():
 
     def get(self):
 
-        if self.fields:
+        if hasattr(self, 'fields'):
             pass
         else:
             self.fields = "*"
 
         conditions = []
         for key, oper, val in self.wheres:
-            conditions.append(self.operator_strategy(key, oper, val))
+            k = "`" + key + "`"
+            conditions.append(self.operator_strategy(k, oper, val))
 
         self.query = (
-            "SELECT {} FROM `{}` WHERE `{}` {} {}").format(
+            "SELECT {} FROM `{}` WHERE {};").format(
             self.fields,
             self.table_name,
             "AND".join(conditions)
