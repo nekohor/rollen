@@ -1,7 +1,7 @@
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
-
+from matplotlib import rc
 from .std import Stand
 from .roll import Roll
 
@@ -12,6 +12,21 @@ sns.set(rc={'font.sans-serif': [u'Microsoft YaHei', u'Arial',
                                 u'Liberation Sans', u'Bitstream Vera Sans',
                                 u'sans-serif']})
 # mpl.style.use('ggplot')
+
+# plt.rcParams['font.sans-serif'] = ['SimHei']  # 中文字体设置
+# plt.rcParams['axes.unicode_minus'] = False
+
+# rc('text', usetex=True)
+# rc('text.latex', unicode=True)
+# rc('text.latex', preamble=r'\usepackage[utf8]{inputenc}')
+# rc('text.latex', preamble=r'\usepackage[russian]{babel}')
+
+# font = {'family': 'serif',
+#         'serif': ['Computer Modern Unicode'],
+#         'size': 12,
+#         }
+
+# rc('font', **font)
 
 
 class ContinuouslyVariableCrown():

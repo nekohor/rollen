@@ -10,9 +10,9 @@ def test_plot_shft_crn():
 
 
 def test_plot_shft_crn_optimized():
-    line = 1580
-    std = 3
-    wid = 1250
+    line = 2250
+    std = 4
+    wid = 1650
     new_max_crn = 0.3
     new_min_crn = -0.7
     plot_shft_crn_optimized(line, std, wid, new_max_crn, new_min_crn)

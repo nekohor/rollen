@@ -54,10 +54,14 @@ def plot_shft_crn_optimized(line, std, wid, max_crn, min_crn):
     logging.info(new_cvc.max_crn)
     logging.info(new_cvc.min_crn)
 
-    coefs = [round(x, 16) for x in new_cvc.get_prof_coefs()]
+    old_coefs = [round(x, 16) for x in old_cvc.get_prof_coefs()]
+    new_coefs = [round(x, 16) for x in new_cvc.get_prof_coefs()]
+    logging.info(new_coefs)
 
-    plt.text(50, -200,
-             "新a1={}\n新a2={}\n新a3={}\n".format(coefs[1], coefs[2], coefs[3]))
+    plt.text(-150, -50, "原a1={}\n原a2={}\n原a3={}\n".format(
+        old_coefs[1], old_coefs[2], old_coefs[3]))
+    plt.text(50, -200, "新a1={}\n新a2={}\n新a3={}\n".format(
+        new_coefs[1], new_coefs[2], new_coefs[3]))
 
     plt.legend()
 
