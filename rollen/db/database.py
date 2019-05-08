@@ -157,9 +157,15 @@ class DataBase():
         logging.info(self.query)
 
         df = pd.read_sql(self.query, self.engine)
+
         if df.shape[0] == 0:
             raise Exception("the data cannot find in datebase")
+
         df.index = df["coil_id"]
+        df.sort_index(inplace=True)
+
+        df.drop_duplicates("coil_id", "first", inplace=True)
+
         return df
 
     def drop(self, table_name):

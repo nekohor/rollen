@@ -50,7 +50,7 @@ class Insertion():
 
     def get_yearly_file_name(self):
         if self.table_name == "performance_components":
-            file_name = "{}/{}热轧性能成分不合格帐新表头.xlsx".format(
+            file_name = "{}/{}performance_components.xlsx".format(
                 # self.rollen.time.get_year(self.mdate), self.line
                 str(self.mdate)[:4], self.line
             )
