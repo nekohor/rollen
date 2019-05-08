@@ -11,16 +11,16 @@ def main():
 
     tools = rollen.roll()
 
-    start_month_date = 201905
-    end_month_date = 201905
+    start_month_date = 201904
+    end_month_date = 201904
     month_dates = tools.time.get_month_dates(
         start_month_date,
         end_month_date
     )
 
     lines = [2250, 1580]
-    # line_list = [2250]
-    lines = [1580]
+    lines = [2250]
+    # lines = [1580]
 
     table_names = ["excel", "evaluate", "temp", "nonC41", "cid"]
     # item_list = ["excel", "temp", "nonC41"]

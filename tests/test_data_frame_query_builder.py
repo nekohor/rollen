@@ -14,8 +14,16 @@ def test_dataframe_query():
 
     result = tool.query.table(df).where(
         "aim_thick", ">", 5
-    ).where(
+    )
+
+    result = result.where(
         "aim_thick", "<=", 15
-    ).get()
+    )
+
+    result = result.get()
 
     print(result)
+
+
+if __name__ == '__main__':
+    test_dataframe_query()

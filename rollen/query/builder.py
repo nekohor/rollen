@@ -98,4 +98,5 @@ class DataFrameQueryBuilder():
     def get(self):
         for key, oper, val in self.wheres:
             self.df = self.operator_strategy(self.df, key, oper, val)
+            print(self.df.shape)
         return self.df

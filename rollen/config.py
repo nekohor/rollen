@@ -13,3 +13,7 @@ def get_library_dir():
 def get_module_dir(sub_module):
     module_dir = get_library_dir() + "/" + get_library_name()
     return module_dir + "/" + sub_module
+
+
+def get_log_pattern_dir(line):
+    return get_module_dir("parser") + "/log/pattern/{}".format(line)
