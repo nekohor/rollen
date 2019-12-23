@@ -7,5 +7,5 @@ from .dbutils import drop_all_tables
 from .dbutils import remove_all_dupilicates
 
 
-from .dbutils import merge_for_cid
-from .dbutils import formal_insert
+from .dbutils import insert_cid
+from .dbutils import insert_tables

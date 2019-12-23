@@ -26,6 +26,13 @@ class TimeUtils():
         else:
             raise Exception("wrong type of end month date")
 
+        if start == end:
+            return [start]
+        elif start > end:
+            raise Exception("start > end in get_month_dates")
+        else:
+            pass
+
         y = start // 100
         m = start % 100
         month_dates = []

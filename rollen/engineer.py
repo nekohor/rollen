@@ -2,6 +2,7 @@ from .time import TimeUtils
 from .db import DataBase
 from .grade import Catego
 from .query import DataFrameQueryBuilder
+from .directory import Directory
 
 # 　　 ┏┓       ┏┓+ +
 # 　　┏┛┻━━━━━━━┛┻┓ + +
@@ -12,7 +13,7 @@ from .query import DataFrameQueryBuilder
 # 　　┃　　　┻　　　┃
 # 　　┃　　　　　　 ┃ + +
 # 　　┗━━┓　　　 ┏━┛
-#          ┃　　  ┃
+#        ┃　　  ┃
 # 　　　　┃　　  ┃ + + + +
 # 　　　　┃　　　┃　Code is far away from bug with the animal protecting
 # 　　　　┃　　　┃ + 　　　　         神兽保佑,代码无bug
@@ -32,13 +33,14 @@ class Engineer():
         self.time = TimeUtils()
         self.grade = Catego()
         self.query = DataFrameQueryBuilder()
+        self.direct = Directory()
 
     def set_line(self, line):
         if isinstance(line, int):
-            pass
+            self.line = line
         else:
-            raise Exception("line with wrong type (not int)")
-        self.line = line
+            self.line = int(line)
+
         self.db = DataBase(self.line)
         return self
 

@@ -1,5 +1,14 @@
-def get_data_collection_dir(tag):
-    return "D:/data_collection_{}".format(tag)
+
+def get_prod_data_dir(frequency, line, table_name):
+    return "D:/prod_data/ledger_{}/{}/{}".format(frequency, line, table_name)
+
+
+def get_data_collection_dir(frequency):
+    return "D:/data_collection_{}".format(frequency)
+
+
+def get_intermediate_dir():
+    return "D:/prod_data/intermediate"
 
 
 def get_library_name():
@@ -7,7 +16,7 @@ def get_library_name():
 
 
 def get_library_dir():
-    return "C:/NutCloudSync/code/rollen"
+    return "D:/NutCloudSync/code/rollen"
 
 
 def get_module_dir(sub_module):

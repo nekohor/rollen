@@ -39,6 +39,8 @@ class DataBase():
             self.user, self.password,
             self.db_name.format(self.line))
 
+        self.is_where = False
+
     def table(self, table_name):
         self.table_name = table_name
         self.wheres = []
@@ -58,19 +60,21 @@ class DataBase():
     def where(self, key, operator=None, value=None):
 
         if not operator and not value:
-            self.onlykey(key)
+            self.only_key(key)
         elif operator and not value:
-            self.isequal(key, operator)
+            self.is_equal(key, operator)
         elif not operator and value:
-            self.isequal(key, value)
+            self.is_equal(key, value)
         elif operator and value:
             self.wheres.append([key, operator, value])
         else:
             raise Exception("other circums in where()")
 
+        self.is_where = True
+
         return self
 
-    def onlykey(self, key):
+    def only_key(self, key):
         """ no return """
 
         if isinstance(key, list):
@@ -97,7 +101,7 @@ class DataBase():
         for key, oper, val in conditions:
             self.wheres.append([key, oper, val])
 
-    def isequal(self, key, value):
+    def is_equal(self, key, value):
         """ no return """
 
         if isinstance(key, str):
@@ -132,7 +136,7 @@ class DataBase():
         elif oper == "<=":
             return "{} <= {}".format(key, val)
         elif oper == "regexp" or oper == "re":
-            return "{} REGEXP ({})".format(key, ",".join(val))
+            return "{} REGEXP '{}'".format(key, val)
         else:
             raise Exception("unknown operator")
 
@@ -148,18 +152,27 @@ class DataBase():
             k = "`" + key + "`"
             conditions.append(self.operator_strategy(k, oper, val))
 
-        self.query = (
-            "SELECT {} FROM `{}` WHERE {};").format(
-            self.fields,
-            self.table_name,
-            "AND".join(conditions)
-        )
+        if self.is_where is True:
+            self.query = (
+                "SELECT {} FROM `{}` WHERE {};").format(
+                self.fields,
+                self.table_name,
+                "AND".join(conditions)
+            )
+        else:
+            self.query = (
+                "SELECT {} FROM `{}`;").format(
+                self.fields,
+                self.table_name
+            )
+
         logging.info(self.query)
 
         df = pd.read_sql(self.query, self.engine)
 
         if df.shape[0] == 0:
-            raise Exception("the data cannot find in datebase")
+            # raise Exception("the data cannot find in datebase")
+            return df
 
         df.index = df["coil_id"]
         df.sort_index(inplace=True)

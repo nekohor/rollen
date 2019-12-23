@@ -1,8 +1,0 @@
-[
-  "tests/test_config.py::test_get_dirs",
-  "tests/test_cvc_plot.py::test_plot_shft_crn",
-  "tests/test_cvc_plot.py::test_plot_shft_crn_optimized",
-  "tests/test_cvc_plot.py::test_plot_cvc_profs",
-  "tests/test_data_frame_query_builder.py::test_dataframe_query",
-  "tests/test_grade.py::test_grade_catego"
-]
