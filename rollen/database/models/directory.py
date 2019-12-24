@@ -11,6 +11,5 @@ class Directory(Base):
     __tablename__ = "directory"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    coil_num = Column(Integer, unique=True, nullable=False)
     coil_id = Column(String(30), unique=True, nullable=False)
     pond_date = Column(Integer)

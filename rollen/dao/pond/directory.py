@@ -1,24 +1,19 @@
 import os
 
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import ForeignKey
-from sqlalchemy import Column, String, Integer, Text
-from sqlalchemy.orm import sessionmaker, relationship
+from sqlalchemy.orm import sessionmaker
 
 from rollen.database import DataBaseManager
 from rollen.utils.millline import MillLine
 
-from rollen.database.models import Directory
-
-Base = declarative_base()
+from rollen.database.models.directory import Directory
 
 
 class DirectoryDao():
 
-    def __init__(self, line_tag):
+    def __init__(self, line):
 
-        self.line_tag = line_tag
-        self.engine = DataBaseManager.get_database("coil")[line_tag]
+        self.line = str(line)
+        self.engine = DataBaseManager.get_database("coil")[self.line]
 
     def sync_table_with_date(self, current_date):
 
@@ -30,9 +25,9 @@ class DirectoryDao():
         month = current_date_str[:6]
         date = current_date_str
 
-        root_dir = MillLine.get_pond_root_dir(self.line_tag)
+        root_dir = MillLine.get_pond_root_dir(self.line)
         cur_dir = root_dir + "/{}/{}".format(month, date)
-        header = MillLine.get_coil_id_header(self.line_tag)
+        header = MillLine.get_coil_id_header(self.line)
 
         coil_ids = [x for x in os.listdir(cur_dir) if x[0] == header]
 

@@ -1,6 +1,9 @@
 import cx_Oracle
 from sqlalchemy import create_engine
 
+from rollen.config.millline import LINE2250
+from rollen.config.millline import LINE1580
+
 
 class DataBaseManager:
 
@@ -64,26 +67,26 @@ class DataBaseManager:
         # 但需要先通过sqlalchemy.create_engine建立连接,
         # 且字符编码设置为utf8mb4，否则有些latin字符不能处理
         engines = {}
-        engines["hrm2250"] = create_engine(
+        engines[LINE2250] = create_engine(
             'mysql+pymysql://{}:{}@{}:{}/{}?charset={}'
             .format(
                 user,
                 password,
                 address,
                 port,
-                db_name.format(2250),
+                db_name.format(LINE2250),
                 charset
             )
         )
 
-        engines["hrm1580"] = create_engine(
+        engines[LINE1580] = create_engine(
             'mysql+pymysql://{}:{}@{}:{}/{}?charset={}'
             .format(
                 user,
                 password,
                 address,
                 port,
-                db_name.format(1580),
+                db_name.format(LINE1580),
                 charset
             )
         )

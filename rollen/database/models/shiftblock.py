@@ -9,7 +9,6 @@ class ShiftBlock(Base):
     __tablename__ = 'shiftblock'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    coil_num = Column(Integer, unique=True, nullable=False)
     coil_id = Column(String(30), unique=True, nullable=False)
 
     order_thick = Column(String(80))

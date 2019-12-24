@@ -8,9 +8,8 @@ class Excel(Base):
     __tablename__ = 'excel'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    coil_num = Column(Integer, unique=True, nullable=False)
     coil_id = Column(String(30), unique=True, nullable=False)
-    
+
     start_date = Column(Date)
     start_time = Column(Time)
     end_date = Column(Date)

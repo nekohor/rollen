@@ -7,21 +7,22 @@ from rollen.utils import DirectoryUtils
 
 class LedgerReader():
 
-    def __init__(self, line, table_name):
+    def __init__(self, line, table_name, month_date):
 
-        self.line = line
+        self.line = str(line)
         self.table_name = table_name
+        self.month_date = month_date
 
-        self.freq = self.get_frequency()
+        self.file_name = self.get_file_name()
 
         self.cleaner = LedgerCleaner(self.line)
 
         self.df_cols = pd.read_excel(
-            DirectoryUtils.get_module_dir("app.ledger") + "/cols.xlsx")
+            DirectoryUtils.get_module_dir("domain.ledger") + "/cols.xlsx")
 
     def get_frequency(self):
         self.table_names_dict = {
-            "monthly": ["excel", "temp", "shiftblock",
+            "monthly": ["cid", "excel", "temp", "shiftblock",
                         "evaluate", "nonC41", "cid", "backoff", "shape"],
             "yearly": ["chem"]
         }
@@ -38,9 +39,31 @@ class LedgerReader():
 
     # ------------------------- get file names -----------------------------
     # ----------------------------------------------------------------------
-    def get_file_name(self, month_date):
+    def is_file_exists(self):
 
-        self.month_date = month_date
+        is_exist = True
+
+        if self.table_name == "cid":
+
+            excel_file_name = LedgerReader(
+                self.line, "excel", self.month_date).get_file_name()
+            temp_file_name = LedgerReader(
+                self.line, "temp", self.month_date).get_file_name()
+
+            if (
+                not os.path.exists(excel_file_name) or
+                not os.path.exists(temp_file_name)
+            ):
+                is_exist = False
+        else:
+            if not os.path.exists(self.file_name):
+                is_exist = False
+
+        return is_exist
+
+    def get_file_name(self):
+
+        self.freq = self.get_frequency()
 
         file_name = os.path.join(
             DirectoryUtils.get_prod_data_dir(
@@ -62,17 +85,20 @@ class LedgerReader():
     # ----------------------------------------------------------------------
 
     # read different data filter with cleaner
-    def read_data(self, month_date):
+    def read_data(self):
 
-        file_name = self.get_file_name(month_date)
+        if self.table_name == "cid":
+            self.build_cid_data(self.file_name)
 
-        # read file as pandas.dataframe
-        df = pd.read_excel(file_name)
+        df = pd.read_excel(self.file_name)
 
         # post process
         df.columns = pd.Series(df.columns).apply(lambda x: x.strip())
         df = self.cleaner.clean_data(self.table_name, df)
         df.drop_duplicates("coil_id", "last", inplace=True)
+
+        # build constant columns
+        # df["coil_num"] = df["coil_id"].apply(lambda x: int(str(x)[1:-1]))
         df["month"] = self.month_date
 
         # select columns
@@ -91,3 +117,53 @@ class LedgerReader():
         else:
             raise Exception("table_name not in df_cols")
         return cols
+
+    def build_cid_data(self, file_name):
+
+        df_excel = LedgerReader(
+            self.line, "excel", self.month_date).read_data()
+        df_temp = LedgerReader(
+            self.line, "temp", self.month_date).read_data()
+
+        need_cols_in_excel = [
+            "coil_id",
+            "start_date",
+            "start_time",
+            "datetime",
+            "end_date",
+            "end_time",
+            "slab_id",
+            "slab_grade",
+            "steel_grade",
+            "slab_weight",
+            "coil_weight",
+            "next_process",
+            "last_process",
+            "fce_num",
+            "dc_num",
+            "coil_len",
+            "aim_thick",
+            "aim_width",
+            "aim_crown",
+            "prod_order",
+            "sale_order",
+            "sale_item_id",
+            "order_purpose",
+            "month"
+        ]
+
+        need_cols_in_temp = [
+            "coil_id",
+            "aim_ht",
+            "act_ht",
+            "aim_fdt",
+            "aim_ct"
+        ]
+
+        df_cid = pd.merge(
+            df_excel[need_cols_in_excel],
+            df_temp[need_cols_in_temp],
+            how='left',
+            on="coil_id"
+        )
+        df_cid.to_excel(file_name)

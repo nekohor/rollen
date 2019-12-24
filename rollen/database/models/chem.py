@@ -8,7 +8,6 @@ class Chem(Base):
     __tablename__ = 'chem'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    coil_num = Column(Integer, unique=True, nullable=False)
     coil_id = Column(String(30), unique=True, nullable=False)
 
     prod_date = Column(String(80))

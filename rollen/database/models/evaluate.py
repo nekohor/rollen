@@ -8,7 +8,6 @@ class Evaluate(Base):
     __tablename__ = 'evaluate'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    coil_num = Column(Integer, unique=True, nullable=False)
     coil_id = Column(String(30), unique=True, nullable=False)
 
     steel_grade = Column(String(80))

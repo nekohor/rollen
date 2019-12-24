@@ -6,10 +6,9 @@ Base = declarative_base()
 
 
 class NonC41(Base):
-    __tablename__ = 'nonC41'
+    __tablename__ = 'nonc41'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    coil_num = Column(Integer, unique=True, nullable=False)
     coil_id = Column(String(30), unique=True, nullable=False)
 
     datetime = Column(TIMESTAMP)

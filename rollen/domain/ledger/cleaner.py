@@ -1,11 +1,14 @@
 import pandas as pd
 import numpy as np
 
+from rollen.config.millline import LINE2250
+from rollen.config.millline import LINE1580
+
 
 class LedgerCleaner():
 
     def __init__(self, line):
-        self.line = line
+        self.line = str(line)
 
     def clean_data(self, table_name, df):
         return getattr(self, "clean_{}_data".format(table_name))(df)
@@ -157,7 +160,7 @@ class LedgerCleaner():
         df["coil_id"] = df["CoilID"]
         df["steel_grade"] = df["AlloyName"]
 
-        if 2250 == self.line:
+        if LINE2250 == self.line:
             df["steel_grade"] = [
                 ("MR" + x.strip()) if len(x) == 8 else x
                 for x in df["steel_grade"]]
@@ -330,14 +333,14 @@ class LedgerCleaner():
         return df
 
     def clean_actblock_data(self, df):
-        if 1580 == self.line:
+        if LINE1580 == self.line:
             df["自动封闭原因"] = df["L3自动封闭情况"]
             df["分厂反馈信息"] = df["轧机反馈信息"]
             df["缺陷"] = df["主要表面缺陷类别"]
             df["缺陷描述"] = df["表面缺陷描述"]
             df["当班判定意见"] = df["表面质量判定结果"]
             df["白班判定意见"] = df["质检评定意见"]
-        elif 2250 == self.line:
+        elif LINE2250 == self.line:
             df["实际重量"] = df["实际重量（吨）"]
         else:
             raise Exception("wrong mill line")

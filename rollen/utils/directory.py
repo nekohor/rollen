@@ -1,7 +1,7 @@
 import os
 
-from rollen.config.millline import HRM2250_TAG
-from rollen.config.millline import HRM1580_TAG
+from rollen.config.millline import LINE2250
+from rollen.config.millline import LINE1580
 from rollen.config.millline import HRM2250_COILID_HEADER
 from rollen.config.millline import HRM1580_COILID_HEADER
 
@@ -51,11 +51,11 @@ class DirectoryUtils():
         return module_root_dir + "/" + "/".join(module_relative_path)
 
     @classmethod
-    def get_pond_root_dir(cls, line_tag):
+    def get_pond_root_dir(cls, line):
 
-        if line_tag == HRM2250_TAG:
+        if str(line) == LINE2250:
             return HRM2250_POND_ROOT_DIR
-        if line_tag == HRM1580_TAG:
+        if str(line) == LINE1580:
             return HRM1580_POND_ROOT_DIR
 
         raise WrongMillLineError("line_tag matches wrong for pond root dir")
