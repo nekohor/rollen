@@ -1,4 +1,4 @@
-from pondo.database import DataBaseManager
+from rollen.database import DataBaseManager
 
 
 class CurveDao():

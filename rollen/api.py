@@ -1,15 +1,28 @@
-from .engineer import Engineer
+from .roller import Roller
 
 
-def roll(line=None):
-    rln = Engineer()
-    if line:
-        rln = rln.set_line(line)
-    else:
-        pass
-    return rln
+def roll():
+    roller = Roller()
+    return roller
 
-
-def tool():
-    rln = Engineer()
-    return rln
+# 　　 ┏┓       ┏┓+ +
+# 　　┏┛┻━━━━━━━┛┻┓ + +
+# 　　┃　　　　　　 ┃
+# 　　┃　　　━　　　┃ ++ + + +
+# 　 █████━█████  ┃+
+# 　　┃　　　　　　 ┃ +
+# 　　┃　　　┻　　　┃
+# 　　┃　　　　　　 ┃ + +
+# 　　┗━━┓　　　 ┏━┛
+#        ┃　　  ┃
+# 　　　　┃　　  ┃ + + + +
+# 　　　　┃　　　┃　Code is far away from bug with the animal protecting
+# 　　　　┃　　　┃ + 　　　　         神兽保佑,代码无bug
+# 　　　　┃　　　┃
+# 　　　　┃　　　┃　　+
+# 　　　　┃　 　 ┗━━━┓ + +
+# 　　　　┃ 　　　　　┣┓
+# 　　　　┃ 　　　　　┏┛
+# 　　　　┗┓┓┏━━━┳┓┏┛ + + + +
+# 　　　　 ┃┫┫　 ┃┫┫
+# 　　　　 ┗┻┛　 ┗┻┛+ + + +

@@ -1,7 +1,7 @@
 import logging
 
 from rollen.service import LedgerService
-from rollen.config.millline import MILLLINE_LIST
+from rollen.config.millline import MILLLINES
 from rollen.config.millline import LINE2250
 from rollen.config.millline import LINE1580
 from rollen.utils import TimeUtils

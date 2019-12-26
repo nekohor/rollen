@@ -10,12 +10,12 @@ from rollen.database.models import ShiftBlock
 from rollen.database.models import Evaluate
 
 from rollen.database import DataBaseManager
-from rollen.config.millline import MILLLINE_LIST
+from rollen.config.millline import MILLLINES
 
 
 def create_all_tables():
 
-    for line in MILLLINE_LIST:
+    for line in MILLLINES:
 
         engine = DataBaseManager.get_database("ledger")[line]
 

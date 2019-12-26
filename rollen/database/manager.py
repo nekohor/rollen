@@ -92,3 +92,22 @@ class DataBaseManager:
         )
 
         return engines
+
+    @classmethod
+    def remove_dupilicates(cls, line, db_tag, table_name):
+
+        if line is None:
+            conn = cls.get_database(db_tag)
+        else:
+            conn = cls.get_database(db_tag)[str(line)].connect()
+
+        temp_table_name = "tmp_tbl_{}".format()
+
+        cursor = conn.cursor()
+        cursor.execute("DROP TABLE IF EXISTS tmp_table")
+        cursor.execute("create table {} as SELECT ".format(temp_table_name)
+                       "DISTINCT * FROM {}".format(table_name))
+        cursor.execute("DROP TABLE IF EXISTS {}".format(table_name))
+        cursor.execute("RENAME TABLE {} TO {}".format(
+            temp_table_name, table_name))
+        cursor.close()
