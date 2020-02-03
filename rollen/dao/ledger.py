@@ -4,6 +4,7 @@ from rollen.database.models import Evaluate
 from rollen.database.models import ShiftBlock
 from rollen.database.models import Chem
 from rollen.database.models import NonC41
+from rollen.database.models import Cid
 
 from rollen.domain.ledger import LedgerReader
 from rollen.database import DataBaseManager
@@ -32,6 +33,8 @@ class LedgerDao:
             model_class = Excel
         elif table_name == "temp":
             model_class = Temp
+        elif table_name == "cid":
+            model_class = Cid
         elif table_name == "evaluate":
             model_class = Evaluate
         elif table_name == "nonC41":
@@ -82,8 +85,10 @@ class LedgerDao:
         self.DBSession = sessionmaker(bind=self.engine)
         self.session = self.DBSession()
 
-        # self.insert_data_one_by_one()
-        self.insert_data_with_diff()
+        if self.table_name == "shiftblock":
+            self.insert_data_one_by_one()
+        else:
+            self.insert_data_with_diff()
         self.session.close()
 
     def insert_data_with_diff(self):

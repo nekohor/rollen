@@ -25,11 +25,11 @@ class DataFrameQueryBuilder():
     def where(self, key, operator=None, value=None):
 
         if not operator and not value:
-            self.onlykey(key)
+            self.where_single(key)
         elif operator and not value:
-            self.isequal(key, operator)
+            self.where_dual(key, operator)
         elif not operator and value:
-            self.isequal(key, value)
+            self.where_dual(key, value)
         elif operator and value:
             self.wheres.append([key, operator, value])
         else:
@@ -37,7 +37,7 @@ class DataFrameQueryBuilder():
 
         return self
 
-    def onlykey(self, key):
+    def where_single(self, key):
         """ no return """
 
         if isinstance(key, list):
@@ -64,7 +64,7 @@ class DataFrameQueryBuilder():
         for key, oper, val in conditions:
             self.wheres.append([key, oper, val])
 
-    def isequal(self, key, value):
+    def where_dual(self, key, value):
         """ no return """
 
         if isinstance(key, str):
@@ -78,6 +78,7 @@ class DataFrameQueryBuilder():
             self.wheres.append([key, "=", value])
 
     def operator_strategy(self, df, key, oper, val):
+
         if oper == "=" or oper == "==":
             return df.loc[df[key] == val]
         elif oper == "in" or oper == "isin":

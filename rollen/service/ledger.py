@@ -3,12 +3,12 @@ from rollen.dao import LedgerDao
 import logging
 import os
 
-logging.basicConfig(
-    format=(
-        "%(asctime)s - %(pathname)s[line:%(lineno)d] - "
-        "%(levelname)s: %(message)s"
-    ),
-    level=logging.DEBUG)
+# logging.basicConfig(
+#     format=(
+#         "%(asctime)s - %(pathname)s[line:%(lineno)d] - "
+#         "%(levelname)s: %(message)s"
+#     ),
+#     level=logging.DEBUG)
 
 
 class LedgerService():

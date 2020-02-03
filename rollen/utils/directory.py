@@ -2,8 +2,9 @@ import os
 
 from rollen.config.millline import LINE2250
 from rollen.config.millline import LINE1580
-from rollen.config.millline import HRM2250_COILID_HEADER
-from rollen.config.millline import HRM1580_COILID_HEADER
+
+# from rollen.config.millline import HRM2250_COILID_HEADER
+# from rollen.config.millline import HRM1580_COILID_HEADER
 
 from rollen.config.millline import HRM2250_POND_ROOT_DIR
 from rollen.config.millline import HRM1580_POND_ROOT_DIR
@@ -14,12 +15,12 @@ from rollen.error import WrongMillLineError
 class DirectoryUtils():
 
     @classmethod
-    def mkdir(cls, self, dir_name):
+    def mkdir(cls, dir_name):
         if not os.path.exists(dir_name):
             os.makedirs(dir_name)
 
     @classmethod
-    def get_base_dir(cls, self):
+    def get_base_dir(cls):
         return os.path.dirname(os.path.abspath(__file__))
 
     @classmethod
@@ -33,16 +34,28 @@ class DirectoryUtils():
         return "D:/prod_data/intermediate"
 
     @classmethod
+    def get_lib_root_dir(cls):
+        return "D:/NutCloudSync/code"
+
+    @classmethod
     def get_lib_name(cls):
         return "rollen"
 
     @classmethod
     def get_lib_dir(cls):
-        return "D:/NutCloudSync/code/rollen"
+        return cls.get_lib_root_dir() + "/" + "rollen"
 
     @classmethod
     def get_lib_cfg_dir(cls):
         return cls.get_lib_dir() + "/" + "config"
+
+    @classmethod
+    def get_toml_cfg_dir(cls):
+        return cls.get_lib_root_dir() + "/Statistician/config"
+
+    @classmethod
+    def get_tasks_dir(cls):
+        return cls.get_lib_root_dir() + "/pondo/tasks"
 
     @classmethod
     def get_module_dir(cls, module):
@@ -59,3 +72,30 @@ class DirectoryUtils():
             return HRM1580_POND_ROOT_DIR
 
         raise WrongMillLineError("line_tag matches wrong for pond root dir")
+
+    @classmethod
+    def get_pond_date_dir(cls, line, date):
+
+        current_date = str(date)
+
+        date_dir = "{}/{}/{}".format(
+            cls.get_pond_root_dir(line),
+            current_date[:6],
+            current_date
+        )
+
+        return date_dir
+
+    @classmethod
+    def get_pond_date_dirs(cls, line, dates):
+
+        date_dirs = []
+        for date in dates:
+            cur_dir = cls.get_pond_date_dir(line, date)
+
+            if os.path.exists(cur_dir):
+                date_dirs.append(cur_dir)
+            else:
+                continue
+
+        return date_dirs

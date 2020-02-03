@@ -1,3 +1,6 @@
+from dateutil import parser
+from datetime import timedelta
+
 
 class TimeUtils():
 
@@ -48,3 +51,19 @@ class TimeUtils():
                 y = y + 1
                 m = 1
         return month_dates
+
+    @classmethod
+    def get_dates(cls, start_date, end_date):
+        """ return a list of string """
+
+        start_datetime = parser.parse(str(start_date))
+        end_datetime = parser.parse(str(end_date))
+
+        days = (end_datetime - start_datetime).days
+
+        dates = []
+        for i in range(days + 1):
+            current_datetime = start_datetime + timedelta(days=i)
+            dates.append(current_datetime.strftime("%Y%m%d"))
+
+        return dates

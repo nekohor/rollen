@@ -1,7 +1,5 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import ForeignKey
-from sqlalchemy import Column, String, Integer, Text
-from sqlalchemy.orm import sessionmaker, relationship
+from sqlalchemy import Column, String, Integer
 
 Base = declarative_base()
 
@@ -12,4 +10,4 @@ class Directory(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     coil_id = Column(String(30), unique=True, nullable=False)
-    pond_date = Column(Integer)
+    start_date = Column(String(8))

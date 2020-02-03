@@ -1,5 +1,7 @@
 import pymysql
 import pandas as pd
+import numpy as np
+
 import logging
 from rollen.database import DataBaseManager
 
@@ -12,7 +14,7 @@ class QueryBuilder():
 
         self.line = None
         self.fields = "*"
-        self.wheres = None
+        self.wheres = []
         self.query = None
 
     def millline(self, line):
@@ -59,6 +61,7 @@ class QueryBuilder():
         elif len(params) == 2:
             self.where_dual(params[0], params[1])
         elif len(params) == 3:
+            self.wheres = []
             self.wheres.append([params[0], params[1], params[2]])
         else:
             raise Exception("wrong size of params for where()")
@@ -96,6 +99,7 @@ class QueryBuilder():
 
     def where_dual(self, key, value):
         """ no return """
+        self.wheres = []
 
         if isinstance(value, list):
             self.wheres.append([key, "in", value])
@@ -142,7 +146,7 @@ class QueryBuilder():
                 "SELECT {} FROM `{}` WHERE {};").format(
                 self.fields,
                 self.table_name,
-                "AND".join(conds)
+                " AND ".join(conds)
             )
         else:
             self.query = (

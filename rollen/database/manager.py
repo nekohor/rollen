@@ -16,6 +16,18 @@ class DataBaseManager:
         return getattr(cls, db_tag)
 
     @classmethod
+    def get_mes_database(cls):
+        return DataBaseManager.get_database("mes")
+
+    @classmethod
+    def get_qms_database(cls):
+        return DataBaseManager.get_database("qms")
+
+    @classmethod
+    def get_ledger_database(cls, line):
+        return DataBaseManager.get_database("ledger")[str(line)]
+
+    @classmethod
     def build_database(cls, db_tag):
         setattr(
             cls,
@@ -27,6 +39,11 @@ class DataBaseManager:
         )
 
     @classmethod
+    def build_mes_database(cls):
+        conn = cx_Oracle.connect("hrmmes", "hrmmes", "172.25.12.7/hrmcrm")
+        return conn
+
+    @classmethod
     def build_qms_database(cls):
         conn = cx_Oracle.connect("qms", "system", "172.27.36.1/qmsdb")
         return conn
@@ -34,7 +51,7 @@ class DataBaseManager:
     @classmethod
     def build_pond_database(cls):
 
-        address = "localhost"
+        address = "192.168.88.158"
         port = 3306
         user = "root"
         password = ""
@@ -101,11 +118,11 @@ class DataBaseManager:
         else:
             conn = cls.get_database(db_tag)[str(line)].connect()
 
-        temp_table_name = "tmp_tbl_{}".format()
+        temp_table_name = "tmp_tbl_for_removing_dupilicates"
 
         cursor = conn.cursor()
         cursor.execute("DROP TABLE IF EXISTS tmp_table")
-        cursor.execute("create table {} as SELECT ".format(temp_table_name)
+        cursor.execute("create table {} as SELECT ".format(temp_table_name) +
                        "DISTINCT * FROM {}".format(table_name))
         cursor.execute("DROP TABLE IF EXISTS {}".format(table_name))
         cursor.execute("RENAME TABLE {} TO {}".format(

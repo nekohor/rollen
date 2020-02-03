@@ -6,12 +6,28 @@ from rollen.config.millline import LINE2250
 from rollen.config.millline import LINE1580
 from rollen.utils import TimeUtils
 
-start_month_date = 201701
-end_month_date = 201911
+logging.basicConfig(
+    format=(
+        "%(asctime)s - %(pathname)s[line:%(lineno)d] - "
+        "%(levelname)s: %(message)s"
+    ),
+    level=logging.DEBUG)
 
-table_names = ["nonC41"]
+
+start_month_date = 202001
+end_month_date = 202001
+
+table_names = ["excel", "temp", "cid", "shiftblock"]
 
 lines = [LINE1580]
+
+
+# start_month_date = 201910
+# end_month_date = 201912
+
+# table_names = ["excel", "temp", "cid"]
+
+# lines = [LINE2250]
 
 
 def insert_into_database():

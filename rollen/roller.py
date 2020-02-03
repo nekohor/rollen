@@ -8,9 +8,7 @@ class Roller():
 
     def __init__(self):
 
-        self.time = TimeUtils
-        self.directory = DirectoryUtils
-
+        self.time = TimeUtils()
+        self.directory = DirectoryUtils()
         self.db = QueryBuilder("ledger")
-
         self.grade = Catego()
