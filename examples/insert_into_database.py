@@ -11,8 +11,8 @@ def main():
 
     tools = rollen.roll()
 
-    start_month_date = 201912
-    end_month_date = 201912
+    start_month_date = 201901
+    end_month_date = 201901
     month_dates = tools.time.get_month_dates(
         start_month_date, end_month_date)
 
@@ -25,13 +25,13 @@ def main():
     # table_names = ["excel", "temp", "evaluate"]
     # table_names = ["excel", "temp"]
     # table_names = ["evaluate"]
-    
+
     table_names = ["shiftblock"]
     insert_tables(lines, month_dates, table_names)
 
-    table_names = ["excel", "temp"]
-    insert_tables(lines, month_dates, table_names)
-    insert_cid(lines, month_dates)
+    # table_names = ["excel", "temp"]
+    # insert_tables(lines, month_dates, table_names)
+    # insert_cid(lines, month_dates)
 
     # ------------------ 成分性能 ---------------------------
     # year_list = [2018, 2019]

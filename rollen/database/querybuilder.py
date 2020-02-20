@@ -77,7 +77,8 @@ class QueryBuilder():
         if isinstance(key, list):
             self.add_conds_to_wheres(key)
         else:
-            raise Exception("wrong type of one param in QueryBuilder::where")
+            raise Exception(
+                "wrong type of one param in QueryBuilder::where; need list")
 
     def add_conds_to_wheres(self, conds):
         """ conds is a list of lists """

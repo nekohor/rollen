@@ -14,10 +14,11 @@ logging.basicConfig(
     level=logging.DEBUG)
 
 
-start_month_date = 202001
-end_month_date = 202001
+start_month_date = 202002
+end_month_date = 202002
 
-table_names = ["excel", "temp", "cid", "shiftblock"]
+# table_names = ["excel", "temp", "cid", "shiftblock"]
+table_names = ["shiftblock"]
 
 lines = [LINE1580]
 

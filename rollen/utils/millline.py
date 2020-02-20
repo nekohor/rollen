@@ -15,9 +15,9 @@ class MillLine():
     @classmethod
     def get_coil_id_header(cls, line):
 
-        if line == LINE2250:
+        if str(line) == LINE2250:
             return HRM2250_COILID_HEADER
-        if line == LINE1580:
+        if str(line) == LINE1580:
             return HRM1580_COILID_HEADER
 
         raise WrongMillLineError(

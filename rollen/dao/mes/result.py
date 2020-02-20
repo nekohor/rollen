@@ -1,4 +1,8 @@
 from rollen.database import DataBaseManager
+from rollen.utils.millline import MillLine
+
+from rollen.config.millline import LINE2250
+from rollen.config.millline import LINE1580
 
 import pandas as pd
 
@@ -16,7 +20,7 @@ class ResultDao():
             'slab_id': 'ACTSLABID',
             'steel_grade': 'GRADENAME',
             'coil_length': 'COILLENGTH',
-            'coil_weight': 'ACTCOILID',
+            'coil_weight': 'ACTCOILWEIGHT',
             'coil_in_diam': 'COILINDIA',
             'coil_out_diam': 'COILOUTDIA',
             'fce_num': 'FURNACENO',
@@ -26,10 +30,18 @@ class ResultDao():
             'aim_fdt': 'TEXIT',
             'aim_ct': 'TEXITCS',
             'aim_crown': 'CROWNEXIT',
+
+            'flat_perc': 'FLATEXITPON',
+            'crown_perc': 'CROWNEXITPON',
+            'wedge_perc': 'WEDGEEXITPON',
+
+            'slab_grade': 'GRADE_ID',
             'slab_length': 'SLABLENGTH',
             'slab_width': 'SLABWIDTH',
             'slab_thick': 'SLABTHICKNESS',
             'slab_weight': 'SLABWEIGHT',
+
+            # 'order_usage': 'L4_USAGE',
         }
 
     def get_column_dict(self):
@@ -38,23 +50,53 @@ class ResultDao():
     def get_sql_columns(self):
         return ["{} as {}".format(v, k) for k, v in self.rename_dict.items()]
 
-    def get_sql(self):
-        sql = (
-            """
-            SELECT {cols}
-            FROM RHS_RESULT
-            LEFT JOIN RSLAB_RESULT
-            ON RHS_RESULT.ACTSLABID = RSLAB_RESULT.SLAB_ID
-            """
-        ).format(cols=",".join(self.get_sql_columns()))
+    def get_sql(self, line=None):
+
+        def left_join_slab_result(sql):
+            res_sql = (
+                sql +
+                " LEFT JOIN RSLAB_RESULT" +
+                " ON RHS_RESULT.ACTSLABID = RSLAB_RESULT.SLAB_ID")
+
+            return res_sql
+
+        def left_join_order_usage_table(sql, line):
+
+            if str(line) == LINE2250:
+                order_usage_table = "PSI_BACK_PDI_HRM"
+            elif str(line) == LINE1580:
+                order_usage_table = "PSI_BACK_PDI_HRM_HM2"
+
+            res_sql = (
+                sql +
+                " LEFT JOIN {order_usage_table}" +
+                " ON RHS_RESULT.L4PONO = {order_usage_table}.L4PO"
+            ).format(order_usage_table=order_usage_table)
+            return res_sql
+
+        initial_sql = "SELECT {cols} FROM RHS_RESULT"
+
+        if line is None:
+            sql_cols = self.get_sql_columns()
+            sql = initial_sql.format(cols=",".join(sql_cols))
+            sql = left_join_slab_result(sql)
+
+        else:
+            self.rename_dict['order_usage'] = 'L4_USAGE'
+            sql_cols = self.get_sql_columns()
+            sql = initial_sql.format(cols=",".join(sql_cols))
+            sql = left_join_slab_result(sql)
+            sql = left_join_order_usage_table(sql, line)
+
         return sql
 
-    def get_data_by_date(self, start_date, end_date):
-        start_time = str(start_date) + '000000'
-        end_time = str(start_date) + '235959'
-        # print(start_time, end_time)
-
-        return self.get_data_by_time(start_time, end_time)
+    def get_data_by_sql(self, sql):
+        df = pd.read_sql_query(sql, self.conn)
+        df.columns = pd.Series(df.columns.values).apply(lambda x: x.lower())
+        df.drop_duplicates("coil_id", "last", inplace=True)
+        df = df.sort_values(by='coil_id')
+        df = df.reset_index(drop=True)
+        return df
 
     def get_data_by_time(self, start_time, end_time):
         # cursor = self.conn.cursor()
@@ -65,10 +107,45 @@ class ResultDao():
         # return rows
 
         sql = self.get_sql()
-        sql = sql + \
-            "WHERE PRODSTART >= '{}' AND PRODEND <= '{}'".format(
-                start_time, end_time)
+        sql = (
+            sql + " WHERE PRODEND >= '{}' AND PRODEND <= '{}'"
+        ).format(start_time, end_time)
 
-        df = pd.read_sql_query(sql, self.conn)
-        df.columns = pd.Series(df.columns.values).apply(lambda x: x.lower())
-        return df
+        data = self.get_data_by_sql(sql)
+        return data
+
+    def get_data_by_line_and_time(self, line, start_time, end_time):
+
+        if str(line) == LINE2250:
+            time_column = "PRODEND"
+        elif str(line) == LINE1580:
+            # time_column = "PRODSTART"
+            time_column = "PRODEND"
+
+        sql = self.get_sql(line)
+        sql = (
+            sql +
+            " WHERE {time_column} >= '{start_time}'"
+            " AND {time_column} <= '{end_time}'"
+        ).format(
+            time_column=time_column,
+            start_time=start_time,
+            end_time=end_time)
+
+        coil_id_header = MillLine.get_coil_id_header(line)
+        sql = sql + " AND ACTCOILID LIKE '{}%'".format(coil_id_header)
+
+        data = self.get_data_by_sql(sql)
+        return data
+
+    def get_data_by_coil_ids(self, coil_ids):
+        sql = self.get_sql()
+
+        sql_coil_ids = ", ".join(["'" + x + "'" for x in coil_ids])
+        print(sql_coil_ids)
+        sql = (
+            sql +
+            " WHERE ACTCOILID IN ( {} )".format(sql_coil_ids)
+        )
+        data = self.get_data_by_sql(sql)
+        return data
