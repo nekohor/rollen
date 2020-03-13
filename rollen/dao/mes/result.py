@@ -35,12 +35,22 @@ class ResultDao():
             'crown_perc': 'CROWNEXITPON',
             'wedge_perc': 'WEDGEEXITPON',
 
-            'slab_grade': 'GRADE_ID',
-            'slab_length': 'SLABLENGTH',
-            'slab_width': 'SLABWIDTH',
-            'slab_thick': 'SLABTHICKNESS',
-            'slab_weight': 'SLABWEIGHT',
+            # table slab_result
+            # 'slab_grade': 'GRADE_ID',
+            # 'slab_length': 'SLABLENGTH',
+            # 'slab_width': 'SLABWIDTH',
+            # 'slab_thick': 'SLABTHICKNESS',
+            # 'slab_weight': 'SLABWEIGHT',
 
+            # table slab_info
+            'slab_grade': 'STEELGRADE',
+            'slab_length': 'LENGTH',
+            'slab_width': 'WIDTH',
+            'slab_thick': 'THICKNESS',
+            'slab_weight': 'WEIGHT',
+
+
+            # table order_usage
             # 'order_usage': 'L4_USAGE',
         }
 
@@ -57,6 +67,14 @@ class ResultDao():
                 sql +
                 " LEFT JOIN RSLAB_RESULT" +
                 " ON RHS_RESULT.ACTSLABID = RSLAB_RESULT.SLAB_ID")
+
+            return res_sql
+
+        def left_join_slab_info(sql):
+            res_sql = (
+                sql +
+                " LEFT JOIN A_SLABINFO" +
+                " ON RHS_RESULT.ACTSLABID = A_SLABINFO.SLABID")
 
             return res_sql
 
@@ -79,13 +97,13 @@ class ResultDao():
         if line is None:
             sql_cols = self.get_sql_columns()
             sql = initial_sql.format(cols=",".join(sql_cols))
-            sql = left_join_slab_result(sql)
+            sql = left_join_slab_info(sql)
 
         else:
             self.rename_dict['order_usage'] = 'L4_USAGE'
             sql_cols = self.get_sql_columns()
             sql = initial_sql.format(cols=",".join(sql_cols))
-            sql = left_join_slab_result(sql)
+            sql = left_join_slab_info(sql)
             sql = left_join_order_usage_table(sql, line)
 
         return sql
@@ -119,8 +137,8 @@ class ResultDao():
         if str(line) == LINE2250:
             time_column = "PRODEND"
         elif str(line) == LINE1580:
-            # time_column = "PRODSTART"
-            time_column = "PRODEND"
+            time_column = "PRODSTART"
+            # time_column = "PRODEND"
 
         sql = self.get_sql(line)
         sql = (

@@ -30,4 +30,5 @@ class Registry:
         configs["lengthMode"] = toml.load(
             toml_cfg_dir + "length_division_mode.toml")
 
+        print(configs)
         return configs

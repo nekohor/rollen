@@ -19,9 +19,16 @@ class ResultService():
         start_date = dates[0]
         end_date = dates[-1]
 
-        start_time = str(start_date) + '000000'
-        end_time = str(end_date) + '235959'
+        if len(str(start_date)) == 8:
+            start_time = str(start_date) + '000000'
+        else:
+            start_time = str(start_date)
 
+        if len(str(end_date)) == 8:
+            end_time = str(end_date) + '235959'
+        else:
+            end_time = str(end_date)
+        print(start_time, end_time)
         d = ResultDao()
         data = d.get_data_by_line_and_time(line, start_time, end_time)
         return self.post_handle(data)

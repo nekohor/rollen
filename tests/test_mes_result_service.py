@@ -1,12 +1,13 @@
 from rollen.service import ResultService
 
+line = 1580
+dates = [20190101, 20191231]
 
 s = ResultService()
-
-dates = [20200201, 20200218]
-data = s.get_data_by_dates(1580, dates)
+data = s.get_data_by_dates(line, dates)
 
 # data.
 print(data)
 print(data.index)
-data.to_excel("d:/tmp/test_result_result.xlsx")
+data.to_excel(
+    "d:/tmp/test_result_{}_{}_{}.xlsx".format(line, dates[0], dates[-1]))
