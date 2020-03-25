@@ -5,7 +5,8 @@ from rollen.service import ResultService
 line = 2250
 
 # dates = [20200229, 20200229]
-dates = [20190101, 20200311]
+dates = [20191101, 20200324]
+# dates = [20200211, 20200211]
 # dates = [20191209153000, 20191209193000]
 
 s = ResultService()

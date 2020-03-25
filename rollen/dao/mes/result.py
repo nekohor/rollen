@@ -48,9 +48,10 @@ class ResultDao():
             'slab_width': 'WIDTH',
             'slab_thick': 'THICKNESS',
             'slab_weight': 'WEIGHT',
+            'fce_ent_temp': 'ENTRYTEMP',
 
 
-            # table order_usage
+            # table order_usage  ( move to left_join_order_usage_table() )
             # 'order_usage': 'L4_USAGE',
         }
 
